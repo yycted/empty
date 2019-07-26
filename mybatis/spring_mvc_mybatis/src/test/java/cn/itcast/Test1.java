@@ -7,6 +7,8 @@ package cn.itcast;
  * @ModificationHistory Who  When  What
  * -----------------------------------------------------
  */
-public class Test {
-
+public class Test1 {
+    public static void main(String[] args) {
+        System.out.println("测试新增输出");
+    }
 }
