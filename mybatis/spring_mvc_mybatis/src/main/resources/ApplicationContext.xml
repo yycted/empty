@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+
+    <!--主要是service层的，同时引入web层和dao层-->
+    <!--组件扫描，扫描service-->
+    <context:component-scan base-package="cn.itcast">
+        <!--排除controller的扫描，让mvc扫描-->
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+    <!--加载propeties文件-->
+    <context:property-placeholder location="classpath:jdbc.properties"/>
+
+    <!--将SqlSessionFactory配置到Spring容器中-->
+    <!--配置数据源-->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="${jdbc.driver}"/>
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="user" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+    <!--配置MyBatis的SqlSessionFactory 让数据源、别名配置注入-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--注入数据源-->
+        <property name="dataSource" ref="dataSource"/>
+        <!--注入包扫描，就是给全类名起别名-->
+        <property name="typeAliasesPackage" value="cn.itcast.domain"/>
+        <!--注入分页插件拦截器(mybatis)-->
+        <!--<property name="plugins">
+            &lt;!&ndash;<plugin interceptor="com.github.pagehelper.PageHelper">
+                &lt;!&ndash; 指定方言 &ndash;&gt;
+                <property name="dialect" value="mysql"/>
+            </plugin>&ndash;&gt;
+            <array>
+                <bean class="com.github.pagehelper.PageHelper"></bean>
+            </array>
+        </property>-->
+    </bean>
+
+    <!--配置Mapper扫描,创建mapper接口的实现类代理对象，并将该对象存储在spring容器中-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="cn.itcast.mapper"/>
+    </bean>
+
+    <!--声明式事务控制-->
+    <!--平台事务管理器,需要datasource注入-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <!--配置事物增强-->
+    <tx:advice id="txAdvice">
+        <tx:attributes>
+            <tx:method name="*"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!--事物的aop织入-->
+    <aop:config>
+        <aop:advisor advice-ref="txAdvice" pointcut="execution(* cn.itcast.service.impl.*.*(..))"/>
+    </aop:config>
+
+</beans>

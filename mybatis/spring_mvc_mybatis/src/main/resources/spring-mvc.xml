@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--配合dispatcherServlet，放行所有静态资源交给tomcat处理-->
+    <mvc:default-servlet-handler/>
+
+    <!--组件扫描,将Controller存储到Spring容器中-->
+    <context:component-scan base-package="cn.itcast.controller"/>
+
+    <!--注解驱动-->
+    <!--1.自动加载 处理映射器和处理适配器
+        2.默认底层就会集成jackson进行对象或集合的json格式字符串的转换-->
+    <mvc:annotation-driven/>
+</beans>

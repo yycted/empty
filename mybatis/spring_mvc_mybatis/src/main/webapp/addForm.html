@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+*@Description  : How Time Flies
+*@author       : YYC
+*@Creation Date: 2019-07-24 14:44
+*@ModificationHistory Who  When  What  
+*-----------------------------------------------------
+-->
+<head>
+    <meta charset="UTF-8">
+    <title>添加用户</title>
+    <script src="js/jquery-3.3.1.js"></script>
+    <script>
+        $(function () {
+            $("#submit").click(function () {
+                var accountList = new Array();
+                var name = $("#name").val();
+                var money = $("#money").val();
+                accountList.push({name: name, money: money});
+
+                $.ajax({
+                    url: "insert", // 请求路径
+                    type: "POST", //请求方式
+                    //data: "username=jack&age=23",//请求参数
+                    //请求参数
+                    data: JSON.stringify(accountList),
+                    success: function (data) {
+                        alert(data);
+                    },//响应成功后的回调函数
+                    error: function () {
+                        alert("出错啦...")
+                    },//表示如果请求响应出现错误，会执行的回调函数
+                    contentType: "application/json;charset=utf-8"//设置接受到的响应数据的格式
+                });
+            });
+            $("#find").click(function () {
+                $.ajax({
+                    url: "findAll",
+                    type: "POST",
+                    success: function (data) {
+                        var innerHTML = data.innerHTML;
+                    },//响应成功后的回调函数
+                    error: function () {
+                        alert("出错啦...")
+                    },//表示如果请求响应出现错误，会执行的回调函数
+                    contentType: "application/json;charset=utf-8"//设置接受到的响应数据的格式
+                })
+            })
+        })
+    </script>
+</head>
+<body>
+    <form id="form1" method="post">
+        <table>
+            <tr>
+                <td>新建用户姓名</td>
+                <td><input type="text" name="name" id="name"></td>
+            </tr>
+            <tr>
+                <td>新建账户金额</td>
+                <td><input type="text" name="money" id="money"></td>
+            </tr>
+            <tr>
+                <td><input type="button" value="保存" id="submit"></td>
+                <td><input type="button" value="查询" id="find"></td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>
